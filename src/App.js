@@ -1,20 +1,24 @@
+import { useEffect, useState } from "react";
+import Warehouse from "../node_modules/esiur/src/Resource/Warehouse";
+
 function App() {
+  const [isCalled, setIsCalled] = useState(false);
+
+  async function connectToEsiur() {
+    try {
+      var x = await Warehouse.get("iip://phase.delta.iq:40401/sys/service");
+
+      console.log(x);
+    } catch (e) {}
+  }
+
+  useEffect(() => {
+    connectToEsiur();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="container btn btn-dark text-light ">test</div>
     </div>
   );
 }
