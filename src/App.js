@@ -45,7 +45,9 @@ function App() {
 
       setLoading(false);
 
-      if (connection === null || connection === undefined) return;
+      console.log(service);
+
+      // if (service === null || service === undefined) return;
 
       service.Generators[2].on(":L1A", () => {
         setGenerator0L1A(service.Generators[0].L1A.toFixed(0));
@@ -157,7 +159,6 @@ function App() {
               segments={10}
               endColor="blue"
               textColor={"#AAA"}
-              currentValueText={`L1A : ${Generator0L2A}`}
             />
           </div>
           <div className="col-md-4 p-4">
@@ -170,7 +171,6 @@ function App() {
               segments={10}
               endColor="blue"
               textColor={"#AAA"}
-              currentValueText={`L2A : ${Generator0L2A}`}
             />
           </div>
           <div className="col-md-4 p-4">
@@ -183,7 +183,6 @@ function App() {
               segments={10}
               endColor="blue"
               textColor={"#AAA"}
-              currentValueText={`L3A : ${Generator0L2A}`}
             />
           </div>
         </div>
@@ -207,7 +206,6 @@ function App() {
               segments={10}
               endColor="blue"
               textColor={"#AAA"}
-              currentValueText={`L1A : ${Generator0L2A}`}
             />
           </div>
           <div className="col-md-4  p-4">
@@ -220,7 +218,6 @@ function App() {
               segments={10}
               endColor="blue"
               textColor={"#AAA"}
-              currentValueText={`L2A : ${Generator0L2A}`}
             />
           </div>
           <div className="col-md-4  p-4">
@@ -233,7 +230,6 @@ function App() {
               segments={10}
               endColor="blue"
               textColor={"#AAA"}
-              currentValueText={`L3A : ${Generator0L2A}`}
             />
           </div>
         </div>
@@ -254,7 +250,6 @@ function App() {
               segments={10}
               endColor="blue"
               textColor={"#AAA"}
-              currentValueText={`L1A : ${Generator0L2A}`}
             />
           </div>
           <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
@@ -267,7 +262,6 @@ function App() {
               segments={10}
               endColor="blue"
               textColor={"#AAA"}
-              currentValueText={`L2A : ${Generator0L2A}`}
             />
           </div>
           <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
@@ -280,7 +274,6 @@ function App() {
               segments={10}
               endColor="blue"
               textColor={"#AAA"}
-              currentValueText={`L3A : ${Generator0L2A}`}
             />
           </div>
         </div>
