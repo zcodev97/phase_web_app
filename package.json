@@ -9,6 +9,7 @@
     "bootstrap": "^5.2.3",
     "esiur": "^2.2.6",
     "react": "^18.2.0",
+    "react-d3-speedometer": "^1.1.0",
     "react-dom": "^18.2.0",
     "react-gauge-chart": "^0.4.1",
     "react-scripts": "5.0.1",
