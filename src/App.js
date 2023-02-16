@@ -6,7 +6,7 @@ import ReactSpeedometer from "react-d3-speedometer";
 function App() {
   const [isCalled, setIsCalled] = useState(false);
 
-  const [service, setService] = useState();
+  const [items, setItems] = useState();
   const [loading, setLoading] = useState(false);
 
   const [Generator0L1A, setGenerator0L1A] = useState(0);
@@ -30,10 +30,11 @@ function App() {
   const [Generator2L2V, setGenerator2L2V] = useState(0);
   const [Generator2L3V, setGenerator2L3V] = useState(0);
 
+  const [lastUpdateDieselLevel, setLastUpdateDieselLevel] = useState("");
+
   const [LevelSensor, setLevelSensor] = useState(0);
 
   async function connectToEsiur() {
-    console.log("loading.");
     try {
       setLoading(true);
       let connection = await Warehouse.get(
@@ -41,61 +42,79 @@ function App() {
         { autoReconnect: true, reconnect: true }
       );
 
-      setService(connection);
-
       setLoading(false);
 
-      console.log(service);
+      if (connection !== null || connection !== undefined) {
+        setItems(connection.Items);
+
+        console.log(items);
+
+        setGenerator0L1A(connection.Generators[0].L1A.toFixed(0));
+        setGenerator0L2A(connection.Generators[0].L2A.toFixed(0));
+        setGenerator0L3A(connection.Generators[0].L3A.toFixed(0));
+        setGenerator1L1A(connection.Generators[1].L1A.toFixed(0));
+        setGenerator1L2A(connection.Generators[1].L2A.toFixed(0));
+        setGenerator1L3A(connection.Generators[1].L3A.toFixed(0));
+        setGenerator2L1A(connection.Generators[2].L1A.toFixed(0));
+        setGenerator2L2A(connection.Generators[2].L2A.toFixed(0));
+        setGenerator2L3A(connection.Generators[2].L3A.toFixed(0));
+        setGenerator0L1V(connection.Generators[0].L1V.toFixed(0));
+        setGenerator0L2V(connection.Generators[0].L2V.toFixed(0));
+        setGenerator0L3V(connection.Generators[0].L3V.toFixed(0));
+        setGenerator1L1V(connection.Generators[1].L1V.toFixed(0));
+        setGenerator1L2V(connection.Generators[1].L2V.toFixed(0));
+        setGenerator1L3V(connection.Generators[1].L3V.toFixed(0));
+        setGenerator2L1V(connection.Generators[2].L1V.toFixed(0));
+        setGenerator2L2V(connection.Generators[2].L2V.toFixed(0));
+        setGenerator2L3V(connection.Generators[2].L3V.toFixed(0));
+
+        setLevelSensor(connection.LevelSensors[0].Volume.toFixed(0));
+        setLastUpdateDieselLevel(
+          connection.LevelSensors[0].LastUpdate.toString()
+        );
+
+        connection.Generators[2].on(":L1A", () => {
+          setGenerator0L1A(connection.Generators[0].L1A.toFixed(0));
+          setGenerator0L2A(connection.Generators[0].L2A.toFixed(0));
+          setGenerator0L3A(connection.Generators[0].L3A.toFixed(0));
+          setGenerator1L1A(connection.Generators[1].L1A.toFixed(0));
+          setGenerator1L2A(connection.Generators[1].L2A.toFixed(0));
+          setGenerator1L3A(connection.Generators[1].L3A.toFixed(0));
+          setGenerator2L1A(connection.Generators[2].L1A.toFixed(0));
+          setGenerator2L2A(connection.Generators[2].L2A.toFixed(0));
+          setGenerator2L3A(connection.Generators[2].L3A.toFixed(0));
+          setGenerator0L1V(connection.Generators[0].L1V.toFixed(0));
+          setGenerator0L2V(connection.Generators[0].L2V.toFixed(0));
+          setGenerator0L3V(connection.Generators[0].L3V.toFixed(0));
+          setGenerator1L1V(connection.Generators[1].L1V.toFixed(0));
+          setGenerator1L2V(connection.Generators[1].L2V.toFixed(0));
+          setGenerator1L3V(connection.Generators[1].L3V.toFixed(0));
+          setGenerator2L1V(connection.Generators[2].L1V.toFixed(0));
+          setGenerator2L2V(connection.Generators[2].L2V.toFixed(0));
+          setGenerator2L3V(connection.Generators[2].L3V.toFixed(0));
+
+          setLevelSensor(connection.LevelSensors[0].Volume.toFixed(0));
+          setLastUpdateDieselLevel(
+            connection.LevelSensors[0].LastUpdate.toString()
+          );
+
+          // console.log("modified");
+        });
+      }
 
       // if (service === null || service === undefined) return;
 
-      service.Generators[2].on(":L1A", () => {
-        setGenerator0L1A(service.Generators[0].L1A.toFixed(0));
-        setGenerator0L2A(service.Generators[0].L2A.toFixed(0));
-        setGenerator0L3A(service.Generators[0].L3A.toFixed(0));
-        setGenerator1L1A(service.Generators[1].L1A.toFixed(0));
-        setGenerator1L2A(service.Generators[1].L2A.toFixed(0));
-        setGenerator1L3A(service.Generators[1].L3A.toFixed(0));
-        setGenerator2L1A(service.Generators[2].L1A.toFixed(0));
-        setGenerator2L2A(service.Generators[2].L2A.toFixed(0));
-        setGenerator2L3A(service.Generators[2].L3A.toFixed(0));
-        setGenerator0L1V(service.Generators[0].L1V.toFixed(0));
-        setGenerator0L2V(service.Generators[0].L2V.toFixed(0));
-        setGenerator0L3V(service.Generators[0].L3V.toFixed(0));
-        setGenerator1L1V(service.Generators[1].L1V.toFixed(0));
-        setGenerator1L2V(service.Generators[1].L2V.toFixed(0));
-        setGenerator1L3V(service.Generators[1].L3V.toFixed(0));
-        setGenerator2L1V(service.Generators[2].L1V.toFixed(0));
-        setGenerator2L2V(service.Generators[2].L2V.toFixed(0));
-        setGenerator2L3V(service.Generators[2].L3V.toFixed(0));
+      // if (connection !== null || connection !== undefined) {
+      //   setServ(connection.Items);
 
-        setLevelSensor(service.LevelSensors[0].Volume.toFixed(0));
+      //   connection.Items[3].on(":LastUpdate", () => {
+      //     // console.log(connection.Items[3].LastUpdate);
+      //     console.log(ser[3].LastUpdate.toLocaleDateString());
+      //     console.log(ser[3].LastUpdate.toLocaleTimeString("en-US"));
+      //   });
+      // }
 
-        console.log("modified");
-      });
-
-      setGenerator0L1A(service.Generators[0].L1A.toFixed(0));
-      setGenerator0L2A(service.Generators[0].L2A.toFixed(0));
-      setGenerator0L3A(service.Generators[0].L3A.toFixed(0));
-      setGenerator1L1A(service.Generators[1].L1A.toFixed(0));
-      setGenerator1L2A(service.Generators[1].L2A.toFixed(0));
-      setGenerator1L3A(service.Generators[1].L3A.toFixed(0));
-      setGenerator2L1A(service.Generators[2].L1A.toFixed(0));
-      setGenerator2L2A(service.Generators[2].L2A.toFixed(0));
-      setGenerator2L3A(service.Generators[2].L3A.toFixed(0));
-      setGenerator0L1V(service.Generators[0].L1V.toFixed(0));
-      setGenerator0L2V(service.Generators[0].L2V.toFixed(0));
-      setGenerator0L3V(service.Generators[0].L3V.toFixed(0));
-      setGenerator1L1V(service.Generators[1].L1V.toFixed(0));
-      setGenerator1L2V(service.Generators[1].L2V.toFixed(0));
-      setGenerator1L3V(service.Generators[1].L3V.toFixed(0));
-      setGenerator2L1V(service.Generators[2].L1V.toFixed(0));
-      setGenerator2L2V(service.Generators[2].L2V.toFixed(0));
-      setGenerator2L3V(service.Generators[2].L3V.toFixed(0));
-
-      setLevelSensor(service.LevelSensors[0].Volume.toFixed(0));
-
-      console.log(service);
+      // console.log(service);
     } catch (e) {
       // alert(e);
       console.log(e);
@@ -110,16 +129,22 @@ function App() {
   return (
     <div className="App">
       <div className="container-fluid text-center text-light mt-2 p-1 ">
-        {service === undefined ? (
+        {items === undefined ? (
           <div className="container-fluid bg-primary text-light text-center">
             Loading....
           </div>
         ) : (
           <div className="container-fluid border rounded bg-dark text-white">
-            {DieselLevelSensor()}
-            {Generator2Charts()}
-            {Generator1Charts()}
+            <ul>
+              {" "}
+              {items.map((element) => (
+                <li> {element.Name}</li>
+              ))}{" "}
+            </ul>
+            {/* {DieselLevelSensor()}
             {Generator0Charts()}
+            {Generator1Charts()}
+            {Generator2Charts()} */}
           </div>
         )}
       </div>
@@ -130,12 +155,13 @@ function App() {
     return (
       <div className="container border rounded mt-2 p-1">
         <h4 className="text-light m-3 p-3">
-          {service === null ? "Loading" : service.LevelSensors[0].Name}
+          {items === null ? "Loading" : items[1].Name}
         </h4>
+        <h4 className="text-light m-3 p-3">{lastUpdateDieselLevel ?? "ss"}</h4>
         <ReactSpeedometer
           width={300}
           maxValue={10000}
-          value={service === null ? 0 : LevelSensor}
+          value={items === null ? 0 : LevelSensor}
           needleColor="blue"
           startColor="red"
           segments={10}
@@ -151,9 +177,11 @@ function App() {
       <div className="container-fluid mt-2 border rounded">
         <div className="row p-3">
           <div className="container text-light">
-            <h4>{service === null ? "Loading" : service.Generators[2].Name}</h4>
+            <h4>{items === null ? "Loading" : items[0].Name}</h4>
           </div>
           <div className="col-md-4 p-4">
+            <div className="container p-2">L1A Gauge</div>
+
             <ReactSpeedometer
               width={300}
               maxValue={500}
@@ -166,6 +194,8 @@ function App() {
             />
           </div>
           <div className="col-md-4 p-4">
+            <div className="container p-2">L2A Gauge</div>
+
             <ReactSpeedometer
               width={300}
               maxValue={500}
@@ -178,6 +208,8 @@ function App() {
             />
           </div>
           <div className="col-md-4 p-4">
+            <div className="container p-2">L3A Gauge</div>
+
             <ReactSpeedometer
               width={300}
               maxValue={500}
@@ -242,9 +274,11 @@ function App() {
       <div className="container-fluid mt-2  border rounded">
         <div className="row p-3 ">
           <div className="container text-light">
-            <h4>{service === null ? "Loading" : service.Generators[1].Name}</h4>
+            <h4>{items === null ? "Loading" : items[2].Name}</h4>
           </div>
           <div className="col-md-4  p-4">
+            <div className="container p-2">L1A Gauge</div>
+
             <ReactSpeedometer
               width={300}
               maxValue={500}
@@ -257,6 +291,8 @@ function App() {
             />
           </div>
           <div className="col-md-4  p-4">
+            <div className="container p-2">L2A Gauge</div>
+
             <ReactSpeedometer
               width={300}
               maxValue={500}
@@ -269,6 +305,8 @@ function App() {
             />
           </div>
           <div className="col-md-4  p-4">
+            <div className="container p-2">L3A Gauge</div>
+
             <ReactSpeedometer
               width={300}
               maxValue={500}
@@ -334,7 +372,7 @@ function App() {
         {/* ampere levels */}
         <div className="row p-3  d-flex justify-content-center">
           <div className="container text-light">
-            <h4>{service === null ? "Loading" : service.Generators[0].Name}</h4>
+            <h4>{items === null ? "Loading" : items[3].Name}</h4>
           </div>
           <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
             <div className="container p-2">L1A Gauge</div>
