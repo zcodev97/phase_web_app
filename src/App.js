@@ -30,6 +30,9 @@ function App() {
   const [Generator2L2V, setGenerator2L2V] = useState(0);
   const [Generator2L3V, setGenerator2L3V] = useState(0);
 
+  const [generators, setGenerators] = useState(null);
+  const [levelSensors, setLevelSensors] = useState(null);
+
   const [lastUpdateDieselLevel, setLastUpdateDieselLevel] = useState("");
 
   const [LevelSensor, setLevelSensor] = useState(0);
@@ -47,7 +50,11 @@ function App() {
       if (connection !== null || connection !== undefined) {
         setItems(connection.Items);
 
-        console.log(items);
+        setGenerators(connection.Generators);
+        setLevelSensors(connection.LevelSensors);
+
+        console.log(generators);
+        console.log(levelSensors);
 
         setGenerator0L1A(connection.Generators[0].L1A.toFixed(0));
         setGenerator0L2A(connection.Generators[0].L2A.toFixed(0));
@@ -135,9 +142,13 @@ function App() {
           </div>
         ) : (
           <div className="container-fluid border rounded bg-dark text-white">
+            {" "}
+            {generators.map((g) =>
+              GeneratorChart(g.Name, g.L1A, g.L2A, g.L3A, g.L1V, g.L2V, g.L3V)
+            )}{" "}
             <ul>
               {" "}
-              {items.map((element) => (
+              {levelSensors.map((element) => (
                 <li> {element.Name}</li>
               ))}{" "}
             </ul>
@@ -172,214 +183,30 @@ function App() {
     );
   }
 
-  function Generator2Charts() {
-    return (
-      <div className="container-fluid mt-2 border rounded">
-        <div className="row p-3">
-          <div className="container text-light">
-            <h4>{items === null ? "Loading" : items[0].Name}</h4>
-          </div>
-          <div className="col-md-4 p-4">
-            <div className="container p-2">L1A Gauge</div>
-
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator2L1A}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-          <div className="col-md-4 p-4">
-            <div className="container p-2">L2A Gauge</div>
-
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator2L2A}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-          <div className="col-md-4 p-4">
-            <div className="container p-2">L3A Gauge</div>
-
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator2L3A}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-        </div>
-        {/* voltage levels */}
-        <div className="row p-3 d-flex justify-content-center">
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
-            <div className="container p-2">L1V Gauge</div>
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator2L1V}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
-            <div className="container p-2">L2V Gauge</div>
-
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator2L2V}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
-            <div className="container p-2">L3V Gauge</div>
-
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator2L3V}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-  function Generator1Charts() {
-    return (
-      <div className="container-fluid mt-2  border rounded">
-        <div className="row p-3 ">
-          <div className="container text-light">
-            <h4>{items === null ? "Loading" : items[2].Name}</h4>
-          </div>
-          <div className="col-md-4  p-4">
-            <div className="container p-2">L1A Gauge</div>
-
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator1L1A}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-          <div className="col-md-4  p-4">
-            <div className="container p-2">L2A Gauge</div>
-
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator1L2A}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-          <div className="col-md-4  p-4">
-            <div className="container p-2">L3A Gauge</div>
-
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator1L3A}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-        </div>
-        {/* voltage levels */}
-        <div className="row p-3 d-flex justify-content-center">
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
-            <div className="container p-2">L1V Gauge</div>
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator1L1V}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
-            <div className="container p-2">L2V Gauge</div>
-
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator1L2V}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
-            <div className="container p-2">L3V Gauge</div>
-
-            <ReactSpeedometer
-              width={300}
-              maxValue={500}
-              value={Generator1L3V}
-              needleColor="red"
-              startColor="green"
-              segments={10}
-              endColor="blue"
-              textColor={"#AAA"}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-  function Generator0Charts() {
+  function GeneratorChart(
+    Name,
+    l1a,
+    l2a,
+    l3a,
+    l1v,
+    l2v,
+    l3v,
+    freq,
+    powerFactor
+  ) {
     return (
       <div className="container-fluid mt-2 border rounded mb-2 mt-2">
         {/* ampere levels */}
         <div className="row p-3  d-flex justify-content-center">
           <div className="container text-light">
-            <h4>{items === null ? "Loading" : items[3].Name}</h4>
+            <h4>{Name}</h4>
           </div>
           <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
             <div className="container p-2">L1A Gauge</div>
             <ReactSpeedometer
               width={300}
               maxValue={500}
-              value={Generator0L1A}
+              value={l1a}
               needleColor="red"
               startColor="green"
               segments={10}
@@ -392,7 +219,7 @@ function App() {
             <ReactSpeedometer
               width={300}
               maxValue={500}
-              value={Generator0L2A}
+              value={l2a}
               needleColor="red"
               startColor="green"
               segments={10}
@@ -405,7 +232,7 @@ function App() {
             <ReactSpeedometer
               width={300}
               maxValue={500}
-              value={Generator0L3A}
+              value={l3a}
               needleColor="red"
               startColor="green"
               segments={10}
@@ -422,7 +249,7 @@ function App() {
             <ReactSpeedometer
               width={300}
               maxValue={500}
-              value={Generator0L1V}
+              value={l1v}
               needleColor="red"
               startColor="green"
               segments={10}
@@ -436,7 +263,7 @@ function App() {
             <ReactSpeedometer
               width={300}
               maxValue={500}
-              value={Generator0L2V}
+              value={l2v}
               needleColor="red"
               startColor="green"
               segments={10}
@@ -450,7 +277,7 @@ function App() {
             <ReactSpeedometer
               width={300}
               maxValue={500}
-              value={Generator0L3V}
+              value={l3v}
               needleColor="red"
               startColor="green"
               segments={10}
