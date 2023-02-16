@@ -56,56 +56,9 @@ function App() {
         console.log(generators);
         console.log(levelSensors);
 
-        setGenerator0L1A(connection.Generators[0].L1A.toFixed(0));
-        setGenerator0L2A(connection.Generators[0].L2A.toFixed(0));
-        setGenerator0L3A(connection.Generators[0].L3A.toFixed(0));
-        setGenerator1L1A(connection.Generators[1].L1A.toFixed(0));
-        setGenerator1L2A(connection.Generators[1].L2A.toFixed(0));
-        setGenerator1L3A(connection.Generators[1].L3A.toFixed(0));
-        setGenerator2L1A(connection.Generators[2].L1A.toFixed(0));
-        setGenerator2L2A(connection.Generators[2].L2A.toFixed(0));
-        setGenerator2L3A(connection.Generators[2].L3A.toFixed(0));
-        setGenerator0L1V(connection.Generators[0].L1V.toFixed(0));
-        setGenerator0L2V(connection.Generators[0].L2V.toFixed(0));
-        setGenerator0L3V(connection.Generators[0].L3V.toFixed(0));
-        setGenerator1L1V(connection.Generators[1].L1V.toFixed(0));
-        setGenerator1L2V(connection.Generators[1].L2V.toFixed(0));
-        setGenerator1L3V(connection.Generators[1].L3V.toFixed(0));
-        setGenerator2L1V(connection.Generators[2].L1V.toFixed(0));
-        setGenerator2L2V(connection.Generators[2].L2V.toFixed(0));
-        setGenerator2L3V(connection.Generators[2].L3V.toFixed(0));
-
-        setLevelSensor(connection.LevelSensors[0].Volume.toFixed(0));
-        setLastUpdateDieselLevel(
-          connection.LevelSensors[0].LastUpdate.toString()
-        );
-
         connection.Generators[2].on(":L1A", () => {
-          setGenerator0L1A(connection.Generators[0].L1A.toFixed(0));
-          setGenerator0L2A(connection.Generators[0].L2A.toFixed(0));
-          setGenerator0L3A(connection.Generators[0].L3A.toFixed(0));
-          setGenerator1L1A(connection.Generators[1].L1A.toFixed(0));
-          setGenerator1L2A(connection.Generators[1].L2A.toFixed(0));
-          setGenerator1L3A(connection.Generators[1].L3A.toFixed(0));
-          setGenerator2L1A(connection.Generators[2].L1A.toFixed(0));
-          setGenerator2L2A(connection.Generators[2].L2A.toFixed(0));
-          setGenerator2L3A(connection.Generators[2].L3A.toFixed(0));
-          setGenerator0L1V(connection.Generators[0].L1V.toFixed(0));
-          setGenerator0L2V(connection.Generators[0].L2V.toFixed(0));
-          setGenerator0L3V(connection.Generators[0].L3V.toFixed(0));
-          setGenerator1L1V(connection.Generators[1].L1V.toFixed(0));
-          setGenerator1L2V(connection.Generators[1].L2V.toFixed(0));
-          setGenerator1L3V(connection.Generators[1].L3V.toFixed(0));
-          setGenerator2L1V(connection.Generators[2].L1V.toFixed(0));
-          setGenerator2L2V(connection.Generators[2].L2V.toFixed(0));
-          setGenerator2L3V(connection.Generators[2].L3V.toFixed(0));
-
-          setLevelSensor(connection.LevelSensors[0].Volume.toFixed(0));
-          setLastUpdateDieselLevel(
-            connection.LevelSensors[0].LastUpdate.toString()
-          );
-
-          // console.log("modified");
+          setGenerators(connection.Generators);
+          console.log("modified");
         });
       }
 
@@ -144,7 +97,16 @@ function App() {
           <div className="container-fluid border rounded bg-dark text-white">
             {" "}
             {generators.map((g) =>
-              GeneratorChart(g.Name, g.L1A, g.L2A, g.L3A, g.L1V, g.L2V, g.L3V)
+              GeneratorChart(
+                g.Name,
+                g.L1A,
+                g.L2A,
+                g.L3A,
+                g.L1V,
+                g.L2V,
+                g.L3V,
+                g.LastUpdate
+              )
             )}{" "}
             <ul>
               {" "}
@@ -191,6 +153,7 @@ function App() {
     l1v,
     l2v,
     l3v,
+    lastUpdate,
     freq,
     powerFactor
   ) {
@@ -199,8 +162,16 @@ function App() {
         {/* ampere levels */}
         <div className="row p-3  d-flex justify-content-center">
           <div className="container text-light">
-            <h4>{Name}</h4>
+            <h5>{Name}</h5>
           </div>
+          <div className="container text-light">
+            <p>
+              <b>{"Last Update : "} </b>
+              {lastUpdate.toLocaleDateString()}{" "}
+              {lastUpdate.toLocaleTimeString()}
+            </p>
+          </div>
+
           <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
             <div className="container p-2">L1A Gauge</div>
             <ReactSpeedometer
