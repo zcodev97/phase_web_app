@@ -95,7 +95,13 @@ function App() {
           </div>
         ) : (
           <div className="container-fluid border rounded bg-dark text-white">
-            {" "}
+            {levelSensors.map((levelSensor) =>
+              DieselLevelSensor(
+                levelSensor.Name,
+                levelSensor.Volume,
+                levelSensor.LastUpdate
+              )
+            )}{" "}
             {generators.map((g) =>
               GeneratorChart(
                 g.Name,
@@ -108,33 +114,26 @@ function App() {
                 g.LastUpdate
               )
             )}{" "}
-            <ul>
-              {" "}
-              {levelSensors.map((element) => (
-                <li> {element.Name}</li>
-              ))}{" "}
-            </ul>
-            {/* {DieselLevelSensor()}
-            {Generator0Charts()}
-            {Generator1Charts()}
-            {Generator2Charts()} */}
           </div>
         )}
       </div>
     </div>
   );
 
-  function DieselLevelSensor() {
+  function DieselLevelSensor(name, currentLevel, lastUpdate) {
     return (
       <div className="container border rounded mt-2 p-1">
-        <h4 className="text-light m-3 p-3">
-          {items === null ? "Loading" : items[1].Name}
-        </h4>
-        <h4 className="text-light m-3 p-3">{lastUpdateDieselLevel ?? "ss"}</h4>
+        <h4 className="text-light m-3 p-3">{name}</h4>
+        <div className="container text-light">
+          <p>
+            <b>{"Last Update : "} </b>
+            {lastUpdate.toLocaleDateString()} {lastUpdate.toLocaleTimeString()}
+          </p>
+        </div>
         <ReactSpeedometer
           width={300}
           maxValue={10000}
-          value={items === null ? 0 : LevelSensor}
+          value={currentLevel}
           needleColor="blue"
           startColor="red"
           segments={10}
