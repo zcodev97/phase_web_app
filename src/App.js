@@ -2,6 +2,56 @@ import { useEffect, useState } from "react";
 import Warehouse from "../node_modules/esiur/src/Resource/Warehouse";
 import GaugeChart from "react-gauge-chart";
 import ReactSpeedometer from "react-d3-speedometer";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+import { Line } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+export const options = {
+  responsive: true,
+  plugins: {
+    legend: { position: "top" },
+    title: { display: true, text: "Diesel Level Sensors" },
+  },
+};
+
+const labels = ["January", "February", "March", "April", "May", "June", "July"];
+export const data = {
+  labels,
+  datasets: [
+    {
+      label: "Dataset 1",
+      data: [1, 2, 2, 3, 2],
+      borderColor: "rgb(255, 99, 132)",
+      backgroundColor: "rgba(255, 99, 132, 0.5)",
+    },
+    {
+      label: "Dataset 2",
+      data: [1, 2, 2, 3, 2],
+
+      borderColor: "rgb(53, 162, 235)",
+      backgroundColor: "rgba(53, 162, 235, 0.5)",
+    },
+  ],
+};
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -17,13 +67,14 @@ function App() {
         { autoReconnect: true, reconnect: true }
       );
 
+      console.log(connection);
       if (connection !== null || connection !== undefined) {
         setGenerators(connection.Generators);
         setLevelSensors(connection.LevelSensors);
 
         connection.Generators[2].on(":L1A", () => {
           setGenerators(connection.Generators);
-          console.log("modified");
+          // console.log("modified");
         });
 
         setLoading(false);
@@ -34,6 +85,8 @@ function App() {
       setLoading(false);
     }
   }
+
+  async function getLevelSensorReport() {}
 
   useEffect(() => {
     connectToEsiur();
@@ -48,25 +101,29 @@ function App() {
           </div>
         ) : (
           <div className="container-fluid border rounded bg-dark text-white">
-            {levelSensors.map((levelSensor) =>
-              DieselLevelSensor(
-                levelSensor.Name,
-                levelSensor.Volume.toFixed(0),
-                levelSensor.LastUpdate
-              )
-            )}{" "}
-            {generators.map((g) =>
-              GeneratorChart(
-                g.Name,
-                g.L1A.toFixed(0),
-                g.L2A.toFixed(0),
-                g.L3A.toFixed(0),
-                g.L1V.toFixed(0),
-                g.L2V.toFixed(0),
-                g.L3V.toFixed(0),
-                g.LastUpdate
-              )
-            )}{" "}
+            {levelSensors === null
+              ? "check Connection"
+              : levelSensors.map((levelSensor) =>
+                  DieselLevelSensor(
+                    levelSensor.Name,
+                    levelSensor.Volume.toFixed(0),
+                    levelSensor.LastUpdate
+                  )
+                )}{" "}
+            {generators === null
+              ? "check Connection"
+              : generators.map((g) =>
+                  GeneratorChart(
+                    g.Name,
+                    g.L1A.toFixed(0),
+                    g.L2A.toFixed(0),
+                    g.L3A.toFixed(0),
+                    g.L1V.toFixed(0),
+                    g.L2V.toFixed(0),
+                    g.L3V.toFixed(0),
+                    g.LastUpdate
+                  )
+                )}{" "}
           </div>
         )}
       </div>
@@ -83,16 +140,25 @@ function App() {
             {lastUpdate.toLocaleDateString()} {lastUpdate.toLocaleTimeString()}
           </p>
         </div>
-        <ReactSpeedometer
-          width={300}
-          maxValue={10000}
-          value={currentLevel}
-          needleColor="blue"
-          startColor="red"
-          segments={10}
-          endColor="green"
-          textColor={"#AAA"}
-        />
+        <div className="row">
+          <div className="col-md-6">
+            <div className="container bg-light text-center border border-2 border-danger">
+              <Line options={options} data={data} />
+            </div>
+          </div>
+          <div className="col-md-6">
+            <ReactSpeedometer
+              width={300}
+              maxValue={10000}
+              value={currentLevel}
+              needleColor="blue"
+              startColor="red"
+              segments={10}
+              endColor="green"
+              textColor={"#AAA"}
+            />
+          </div>
+        </div>
       </div>
     );
   }
@@ -124,7 +190,7 @@ function App() {
             </p>
           </div>
 
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
+          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12   text-center">
             <div className="container p-2">L1A Gauge</div>
             <ReactSpeedometer
               width={300}
@@ -137,7 +203,7 @@ function App() {
               textColor={"#AAA"}
             />
           </div>
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
+          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12   text-center">
             <div className="container p-2">L2A Gauge</div>
             <ReactSpeedometer
               width={300}
@@ -150,7 +216,7 @@ function App() {
               textColor={"#AAA"}
             />
           </div>
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
+          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12  text-center">
             <div className="container p-2">L3A Gauge</div>
             <ReactSpeedometer
               width={300}
@@ -166,8 +232,8 @@ function App() {
         </div>
 
         {/* voltage levels */}
-        <div className="row p-3 d-flex justify-content-center">
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
+        <div className="row   d-flex justify-content-center">
+          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12  text-center">
             <div className="container p-2">L1V Gauge</div>
             <ReactSpeedometer
               width={300}
@@ -180,7 +246,7 @@ function App() {
               textColor={"#AAA"}
             />
           </div>
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
+          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12  text-center">
             <div className="container p-2">L2V Gauge</div>
 
             <ReactSpeedometer
@@ -194,7 +260,7 @@ function App() {
               textColor={"#AAA"}
             />
           </div>
-          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12 p-4 text-center">
+          <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12  text-center">
             <div className="container p-2">L3V Gauge</div>
 
             <ReactSpeedometer
