@@ -16,10 +16,10 @@ function GeneratorChart(
   powerFactor
 ) {
   return (
-    <div className="container-fluid mt-2 border rounded mb-2 mt-2">
+    <div className="container-fluid m-0 p-0 bg-dark mt-2 border rounded">
       {/* ampere levels */}
-      <div className="row p-3  d-flex justify-content-center">
-        <div className="container text-light">
+      <div className="row  d-flex justify-content-center">
+        <div className="container p-2 text-light">
           <h5>{Name}</h5>
         </div>
         <div className="container text-light">
@@ -30,8 +30,9 @@ function GeneratorChart(
         </div>
 
         <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12   text-center">
-          <div className="container p-2">L1A Gauge</div>
+          <div className="container ">L1A Gauge</div>
           <ReactSpeedometer
+            key={Math.random()}
             width={300}
             maxValue={500}
             value={l1a}
@@ -43,8 +44,9 @@ function GeneratorChart(
           />
         </div>
         <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12   text-center">
-          <div className="container p-2">L2A Gauge</div>
+          <div className="container ">L2A Gauge</div>
           <ReactSpeedometer
+            key={Math.random()}
             width={300}
             maxValue={500}
             value={l2a}
@@ -56,8 +58,9 @@ function GeneratorChart(
           />
         </div>
         <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12  text-center">
-          <div className="container p-2">L3A Gauge</div>
+          <div className="container ">L3A Gauge</div>
           <ReactSpeedometer
+            key={Math.random()}
             width={300}
             maxValue={500}
             value={l3a}
@@ -72,8 +75,9 @@ function GeneratorChart(
       {/* voltage levels */}
       <div className="row   d-flex justify-content-center">
         <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12  text-center">
-          <div className="container p-2">L1V Gauge</div>
+          <div className="container">L1V Gauge</div>
           <ReactSpeedometer
+            key={Math.random()}
             width={300}
             maxValue={500}
             value={l1v}
@@ -85,9 +89,10 @@ function GeneratorChart(
           />
         </div>
         <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12  text-center">
-          <div className="container p-2">L2V Gauge</div>
+          <div className="container">L2V Gauge</div>
 
           <ReactSpeedometer
+            key={Math.random()}
             width={300}
             maxValue={500}
             value={l2v}
@@ -99,9 +104,10 @@ function GeneratorChart(
           />
         </div>
         <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12  text-center">
-          <div className="container p-2">L3V Gauge</div>
+          <div className="container">L3V Gauge</div>
 
           <ReactSpeedometer
+            key={Math.random()}
             width={300}
             maxValue={500}
             value={l3v}

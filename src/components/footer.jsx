@@ -1,7 +1,7 @@
 function Footer() {
   return (
     <>
-      <div className="container-fluid bg-dark text-light text-center ">
+      <div className="container-fluid rounded mt-2 mb-2 bg-dark text-light text-center ">
         Phase System 2023
       </div>
     </>
