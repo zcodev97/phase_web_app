@@ -2,67 +2,10 @@ import { useEffect, useState } from "react";
 import Warehouse from "../node_modules/esiur/src/Resource/Warehouse";
 import GaugeChart from "react-gauge-chart";
 import ReactSpeedometer from "react-d3-speedometer";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
 
-import { Line } from "react-chartjs-2";
 import GeneratorChart from "./components/generatorChart";
 import DieselLevelSensor from "./components/dieselLevelSensorChart";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-export const options = {
-  maintainAspectRatio: false,
-  responsive: true,
-  scales: {
-    yAxes: [
-      {
-        ticks: {
-          beginAtZero: true,
-        },
-      },
-    ],
-  },
-  plugins: {
-    legend: { position: "top" },
-    title: { display: true, text: "Diesel Level Sensors" },
-  },
-};
-
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Dataset 1",
-      data: [1, 2, 2, 3, 2],
-      borderColor: "rgb(255, 99, 132)",
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
-    },
-    {
-      label: "Dataset 2",
-      data: [1, 2, 2, 3, 2],
-      borderColor: "rgb(53, 162, 235)",
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
-    },
-  ],
-};
+import DateTimePicker from "react-datetime-picker";
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -96,8 +39,7 @@ function App() {
       setLoading(false);
     }
   }
-
-  async function getLevelSensorReport() {}
+  const [value, onChange] = useState(new Date());
 
   useEffect(() => {
     connectToEsiur();
@@ -111,12 +53,24 @@ function App() {
             Loading....
           </div>
         ) : (
-          <div className="container-fluid border rounded bg-dark text-white">
-            <div
-              className="container bg-light text-center border border-2 border-danger"
-              style={{ height: 300 }}
-            >
-              <Line options={options} data={data} />
+          <div className="container-fluid border rounded bg-dark text-light">
+            <div className="container bg-light text-dark p-2 mt-2 mb-2 rounded">
+              Start{" "}
+              <DateTimePicker
+                onChange={onChange}
+                value={value}
+                disableClock={true}
+                format="y-MM-dd h:mm:ss a"
+                clearIcon={null}
+              />{" "}
+              End{" "}
+              <DateTimePicker
+                onChange={onChange}
+                value={value}
+                disableClock={true}
+                format="y-MM-dd h:mm:ss a"
+                clearIcon={null}
+              />
             </div>
             {levelSensors === null
               ? "check Connection"
@@ -126,7 +80,7 @@ function App() {
                     levelSensor.Volume.toFixed(0),
                     levelSensor.LastUpdate
                   )
-                )}{" "}
+                )}
             {generators === null
               ? "check Connection"
               : generators.map((g) =>

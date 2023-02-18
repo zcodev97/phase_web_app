@@ -1,4 +1,7 @@
+import { useState } from "react";
 import ReactSpeedometer from "react-d3-speedometer";
+import DateTimePicker from "react-datetime-picker";
+import DatePicker from "./datePicker";
 
 function GeneratorChart(
   Name,
@@ -66,7 +69,6 @@ function GeneratorChart(
           />
         </div>
       </div>
-
       {/* voltage levels */}
       <div className="row   d-flex justify-content-center">
         <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 col-12  text-center">
