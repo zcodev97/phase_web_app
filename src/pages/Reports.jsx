@@ -27,6 +27,8 @@ ChartJS.register(
 );
 
 function ReportsPage() {
+  const [connection, setConnection] = useState(window.connection);
+
   const [firstDate, setFirstDate] = useState(new Date());
   const [secondDate, setSecondDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
@@ -34,12 +36,10 @@ function ReportsPage() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [dropDownItems, setDropDownItems] = useState(null);
 
-  const [Items, setItems] = useState(null);
+  const [Items, setItems] = useState();
 
   const [volume, setVolume] = useState([]);
   const [dateReport, setDateReport] = useState([]);
-
-  let items = [];
 
   const options = {
     maintainAspectRatio: false,
@@ -69,56 +69,80 @@ function ReportsPage() {
     ],
   };
 
-  async function connectToEsiur() {
-    try {
-      setLoading(true);
-      let esiurConnection = await Warehouse.get(
-        "iip://phase.delta.iq:40401/sys/service",
-        { autoReconnect: true, reconnect: true }
-      );
+  function setDropdownItems() {
+    let items = [];
 
-      setItems(esiurConnection.Items);
-
-      if (items.length === 0) {
-        esiurConnection.Items.forEach((e) => {
-          items.push({
-            value: e.ModbusId,
-            label: e.Name,
-          });
+    if (items.length === 0) {
+      connection.Items.forEach((e) => {
+        items.push({
+          value: e.ModbusId,
+          label: e.Name,
         });
-      }
-
-      setDropDownItems(items);
-
-      // console.log(items);
-    } catch (e) {
-      // alert(e);
-      console.log(e);
-      setLoading(false);
+      });
     }
-    setLoading(false);
+    setItems(connection.Items);
+    setDropDownItems(items);
   }
 
   async function GetReport() {
-    // console.log(selectedItem);
-
     const item = Items.find((h) => h.ModbusId === selectedItem);
-    console.log(item);
 
-    let result = await item.GetRecords(firstDate, secondDate, 0, 50);
+    try {
+      let result = await item.GetRecords(firstDate, secondDate, 0, 400);
+      let datesWithVolume = result.map((item) => {
+        let data = {
+          volume: item.Volume.toFixed(0),
+          date: new Date(item.Time).toLocaleDateString(),
+          time: new Date(item.Time).toLocaleTimeString(),
+        };
+        return data;
+      });
+
+      let sortedData = datesWithVolume.sort((a, b) => a.volume - b.volume);
+      let q1Index = Math.floor(sortedData.length * 0.25);
+      let q3Index = Math.floor(sortedData.length * 0.75);
+      let q1 = Number(sortedData[q1Index].volume);
+      let q3 = Number(sortedData[q3Index].volume);
+
+      // Calculate the interquartile range (IQR)
+      let iqr = q3 - q1;
+
+      // Find the lower and upper bounds for outliers
+      let lowerBound = q1 - 1.5 * iqr;
+      let upperBound = q3 + 1.5 * iqr;
+
+      // Remove any outliers from the data
+      let filteredData = datesWithVolume.filter(
+        (datum) => datum.volume >= lowerBound && datum.volume <= upperBound
+      );
+
+      let sortedFilteredData = filteredData.sort((a, b) => {
+        // Compare the date property
+        const dateComparison =
+          new Date(a.date + " " + a.time) - new Date(b.date + " " + b.time);
+
+        // If the date is the same, compare the time property
+        if (dateComparison === 0) {
+          return new Date(a.time) - new Date(b.time);
+        }
+
+        // Otherwise, use the date comparison
+        return dateComparison;
+      });
+
+      let volumeData = sortedFilteredData.map((x) => x.volume);
+      let reportDate = sortedFilteredData.map((x) => x.date + " " + x.time);
+
+      setVolume(volumeData);
+      setDateReport(reportDate);
+      console.log(filteredData);
+
+      // console.log(datesWithVolume);
+    } catch (error) {
+      console.log(error);
+    }
 
     // console.log(result);
-
-    let dates = result.map(
-      (item) =>
-        new Date(item.Time).toLocaleDateString() +
-        " " +
-        new Date(item.Time).toLocaleTimeString()
-    );
-
-    setDateReport(dates);
-
-    let TextVolumes = result.map((item) => item.Volume.toFixed(0));
 
     // // Convert the data to an array of numbers
     // const volumes = TextVolumes.map(Number);
@@ -135,10 +159,10 @@ function ReportsPage() {
     //   (val) => Math.abs((val - mean) / sd) <= 3
     // );
 
-    let myData = filterMyData(result);
+    // let myData = filterMyData(result);
 
-    console.log(myData);
-    setVolume(myData);
+    // console.log(myData);
+    // setVolume(myData);
 
     // console.log(volumes);
     // console.log(filteredData);
@@ -157,48 +181,24 @@ function ReportsPage() {
   }
 
   useEffect(() => {
-    connectToEsiur();
+    setDropdownItems();
   }, []);
 
   return (
     <>
       <NavBar />
       <div className="container border-bottom border-primary rounded border-3 text-dark mt-3">
-        <h5>Reports</h5>
+        <h5>Reports </h5>
       </div>
       <div className="row  d-flex justify-content-center align-items-center">
         <div className="col-md-3">
-          <div className="container mt-2 mb-2 p-2 text-dark  border border-2  rounded">
-            Start{" "}
-            <DateTimePicker
-              onChange={setFirstDate}
-              value={firstDate}
-              disableClock={true}
-              format="y-MM-dd h:mm:ss a"
-              clearIcon={null}
-            />{" "}
-          </div>
+          {DatePickerCompo("Start", setFirstDate, firstDate)}
         </div>
         <div className="col-md-3">
-          <div className="container mt-2 mb-2 p-2 text-dark  border border-2  rounded">
-            End{" "}
-            <DateTimePicker
-              onChange={setSecondDate}
-              value={secondDate}
-              disableClock={true}
-              format="y-MM-dd h:mm:ss a"
-              clearIcon={null}
-            />
-          </div>
+          {DatePickerCompo("End", setSecondDate, secondDate)}
         </div>
         <div className="col-md-3">
-          <div className="container mt-2 mb-2 p-1 text-dark  border border-2  rounded">
-            <ReactSelect
-              defaultValue={selectedItem}
-              onChange={(opt) => setSelectedItem(opt.value)}
-              options={dropDownItems}
-            />
-          </div>
+          {ItemsSelectorCompo(selectedItem, setSelectedItem, dropDownItems)}
         </div>
         <div className="col-md-3">
           <div
@@ -218,6 +218,32 @@ function ReportsPage() {
       </div>
     </>
   );
+
+  function DatePickerCompo(title, onChange, value) {
+    return (
+      <div className="container mt-2 mb-2 p-2 text-dark  border border-2  rounded">
+        {title}{" "}
+        <DateTimePicker
+          onChange={onChange}
+          value={value}
+          disableClock={true}
+          format="y-MM-dd h:mm:ss a"
+          clearIcon={null}
+        />{" "}
+      </div>
+    );
+  }
+  function ItemsSelectorCompo(selectedItem, setSelectedItem, dropDownItems) {
+    return (
+      <div className="container mt-2 mb-2 p-1 text-dark  border border-2  rounded">
+        <ReactSelect
+          defaultValue={selectedItem}
+          onChange={(opt) => setSelectedItem(opt.value)}
+          options={dropDownItems}
+        />
+      </div>
+    );
+  }
 }
 
 export default ReportsPage;

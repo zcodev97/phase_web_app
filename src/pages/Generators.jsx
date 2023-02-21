@@ -35,7 +35,7 @@ function GeneratorsPage() {
   }
 
   useEffect(() => {
-    connectToEsiur();
+    // connectToEsiur();
   }, []);
 
   return (
