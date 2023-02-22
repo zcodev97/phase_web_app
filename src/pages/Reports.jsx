@@ -38,7 +38,8 @@ function ReportsPage() {
 
   const [Items, setItems] = useState();
 
-  const [volume, setVolume] = useState([]);
+  const [volume1, setVolume1] = useState([]);
+  const [volume2, setVolume2] = useState([]);
   const [dateReport, setDateReport] = useState([]);
 
   const options = {
@@ -55,10 +56,16 @@ function ReportsPage() {
     labels,
     datasets: [
       {
-        label: "Volume",
-        data: volume.length === 0 ? [] : volume,
+        label: "Volume1",
+        data: volume1.length === 0 ? [] : volume1,
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+      {
+        label: "Volume2",
+        data: volume2.length === 0 ? [] : volume2,
+        borderColor: "rgb(53, 162, 235)",
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
       },
       {
         label: "Date",
@@ -88,54 +95,76 @@ function ReportsPage() {
     const item = Items.find((h) => h.ModbusId === selectedItem);
 
     try {
-      let result = await item.GetRecords(firstDate, secondDate, 0, 400);
+      let result = await item.GetRecords(firstDate, secondDate, 0, 1000);
+
+      setVolume2(result.map((x) => x.Volume));
+
       let datesWithVolume = result.map((item) => {
         let data = {
-          volume: item.Volume.toFixed(0),
+          volume: Math.floor(item.Volume.toFixed(0)),
           date: new Date(item.Time).toLocaleDateString(),
           time: new Date(item.Time).toLocaleTimeString(),
         };
         return data;
       });
+      let volumeData = datesWithVolume.map((x) => Number(x.volume));
+      let reportDate = datesWithVolume.map((x) => x.date + " " + x.time);
 
-      let sortedData = datesWithVolume.sort((a, b) => a.volume - b.volume);
-      let q1Index = Math.floor(sortedData.length * 0.25);
-      let q3Index = Math.floor(sortedData.length * 0.75);
-      let q1 = Number(sortedData[q1Index].volume);
-      let q3 = Number(sortedData[q3Index].volume);
+      let d = [];
+      for (let index = 0; index < result.length - 1; index++) {
+        let dx =
+          (result[index + 1].Volume - result[index].Volume) /
+          (result[index + 1].Time - result[index].Time);
 
-      // Calculate the interquartile range (IQR)
-      let iqr = q3 - q1;
+        //d.push(dx < 1 ? dx : 0);
+        if (dx > 0.001) result[index + 1].Volume = result[index].Volume;
 
-      // Find the lower and upper bounds for outliers
-      let lowerBound = q1 - 1.5 * iqr;
-      let upperBound = q3 + 1.5 * iqr;
+        d.push(result[index].Volume);
+        //else d.push(0);
+      }
 
-      // Remove any outliers from the data
-      let filteredData = datesWithVolume.filter(
-        (datum) => datum.volume >= lowerBound && datum.volume <= upperBound
-      );
-
-      let sortedFilteredData = filteredData.sort((a, b) => {
-        // Compare the date property
-        const dateComparison =
-          new Date(a.date + " " + a.time) - new Date(b.date + " " + b.time);
-
-        // If the date is the same, compare the time property
-        if (dateComparison === 0) {
-          return new Date(a.time) - new Date(b.time);
-        }
-
-        // Otherwise, use the date comparison
-        return dateComparison;
-      });
-
-      let volumeData = sortedFilteredData.map((x) => x.volume);
-      let reportDate = sortedFilteredData.map((x) => x.date + " " + x.time);
-
-      setVolume(volumeData);
+      console.log(d);
+      setVolume1(d);
       setDateReport(reportDate);
-      console.log(filteredData);
+
+      // let sortedData = datesWithVolume.sort((a, b) => a.volume - b.volume);
+      // let q1Index = Math.floor(sortedData.length * 0.25);
+      // let q3Index = Math.floor(sortedData.length * 0.75);
+      // let q1 = Number(sortedData[q1Index].volume);
+      // let q3 = Number(sortedData[q3Index].volume);
+
+      // // Calculate the interquartile range (IQR)
+      // let iqr = q3 - q1;
+
+      // // Find the lower and upper bounds for outliers
+      // let lowerBound = q1 - 1.5 * iqr;
+      // let upperBound = q3 + 1.5 * iqr;
+
+      // // Remove any outliers from the data
+      // let filteredData = datesWithVolume.filter(
+      //   (datum) => datum.volume >= lowerBound && datum.volume <= upperBound
+      // );
+
+      // let sortedFilteredData = filteredData.sort((a, b) => {
+      //   // Compare the date property
+      //   const dateComparison =
+      //     new Date(a.date + " " + a.time) - new Date(b.date + " " + b.time);
+
+      //   // If the date is the same, compare the time property
+      //   if (dateComparison === 0) {
+      //     return new Date(a.time) - new Date(b.time);
+      //   }
+
+      //   // Otherwise, use the date comparison
+      //   return dateComparison;
+      // });
+
+      // let volumeData = sortedFilteredData.map((x) => x.volume);
+      // let reportDate = sortedFilteredData.map((x) => x.date + " " + x.time);
+
+      // setVolume(volumeData);
+      // setDateReport(reportDate);
+      // console.log(sortedFilteredData);
 
       // console.log(datesWithVolume);
     } catch (error) {

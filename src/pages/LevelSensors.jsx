@@ -31,7 +31,7 @@ function LevelSensorsPage() {
   }
 
   useEffect(() => {
-    // connectToEsiur();
+    connectToEsiur();
   }, []);
 
   return (
