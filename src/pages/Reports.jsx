@@ -56,13 +56,13 @@ function ReportsPage() {
     labels,
     datasets: [
       {
-        label: "Volume1",
+        label: "Correct Volume",
         data: volume1.length === 0 ? [] : volume1,
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
       {
-        label: "Volume2",
+        label: "Error Volume",
         data: volume2.length === 0 ? [] : volume2,
         borderColor: "rgb(53, 162, 235)",
         backgroundColor: "rgba(53, 162, 235, 0.5)",
