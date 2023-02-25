@@ -95,106 +95,43 @@ function ReportsPage() {
     const item = Items.find((h) => h.ModbusId === selectedItem);
 
     try {
-      let result = await item.GetRecords(firstDate, secondDate, 0, 1000);
+      console.log("test");
+      let result = await item.GetRecords(firstDate, secondDate, 0, 999);
 
-      setVolume2(result.map((x) => x.Volume));
+      console.log(result);
 
-      let datesWithVolume = result.map((item) => {
-        let data = {
-          volume: Math.floor(item.Volume.toFixed(0)),
-          date: new Date(item.Time).toLocaleDateString(),
-          time: new Date(item.Time).toLocaleTimeString(),
-        };
-        return data;
-      });
-      let volumeData = datesWithVolume.map((x) => Number(x.volume));
-      let reportDate = datesWithVolume.map((x) => x.date + " " + x.time);
+      // setVolume2(result.map((x) => x.Volume));
 
-      let d = [];
-      for (let index = 0; index < result.length - 1; index++) {
-        let dx =
-          (result[index + 1].Volume - result[index].Volume) /
-          (result[index + 1].Time - result[index].Time);
-
-        //d.push(dx < 1 ? dx : 0);
-        if (dx > 0.001) result[index + 1].Volume = result[index].Volume;
-
-        d.push(result[index].Volume);
-        //else d.push(0);
-      }
-
-      console.log(d);
-      setVolume1(d);
-      setDateReport(reportDate);
-
-      // let sortedData = datesWithVolume.sort((a, b) => a.volume - b.volume);
-      // let q1Index = Math.floor(sortedData.length * 0.25);
-      // let q3Index = Math.floor(sortedData.length * 0.75);
-      // let q1 = Number(sortedData[q1Index].volume);
-      // let q3 = Number(sortedData[q3Index].volume);
-
-      // // Calculate the interquartile range (IQR)
-      // let iqr = q3 - q1;
-
-      // // Find the lower and upper bounds for outliers
-      // let lowerBound = q1 - 1.5 * iqr;
-      // let upperBound = q3 + 1.5 * iqr;
-
-      // // Remove any outliers from the data
-      // let filteredData = datesWithVolume.filter(
-      //   (datum) => datum.volume >= lowerBound && datum.volume <= upperBound
-      // );
-
-      // let sortedFilteredData = filteredData.sort((a, b) => {
-      //   // Compare the date property
-      //   const dateComparison =
-      //     new Date(a.date + " " + a.time) - new Date(b.date + " " + b.time);
-
-      //   // If the date is the same, compare the time property
-      //   if (dateComparison === 0) {
-      //     return new Date(a.time) - new Date(b.time);
-      //   }
-
-      //   // Otherwise, use the date comparison
-      //   return dateComparison;
+      // let datesWithVolume = result.map((item) => {
+      //   let data = {
+      //     volume: Math.floor(item.Volume.toFixed(0)),
+      //     date: new Date(item.Time).toLocaleDateString(),
+      //     time: new Date(item.Time).toLocaleTimeString(),
+      //   };
+      //   return data;
       // });
+      // let volumeData = datesWithVolume.map((x) => Number(x.volume));
+      // let reportDate = datesWithVolume.map((x) => x.date + " " + x.time);
 
-      // let volumeData = sortedFilteredData.map((x) => x.volume);
-      // let reportDate = sortedFilteredData.map((x) => x.date + " " + x.time);
+      // let d = [];
+      // for (let index = 0; index < result.length - 1; index++) {
+      //   let dx =
+      //     (result[index + 1].Volume - result[index].Volume) /
+      //     (result[index + 1].Time - result[index].Time);
 
-      // setVolume(volumeData);
+      //   //d.push(dx < 1 ? dx : 0);
+      //   if (dx > 0.001) result[index + 1].Volume = result[index].Volume;
+
+      //   d.push(result[index].Volume);
+      //   //else d.push(0);
+      // }
+
+      // console.log(d);
+      // setVolume1(d);
       // setDateReport(reportDate);
-      // console.log(sortedFilteredData);
-
-      // console.log(datesWithVolume);
     } catch (error) {
       console.log(error);
     }
-
-    // console.log(result);
-
-    // // Convert the data to an array of numbers
-    // const volumes = TextVolumes.map(Number);
-
-    // // Calculate the mean and standard deviation of the data
-    // const mean = volumes.reduce((acc, val) => acc + val, 0) / volumes.length;
-    // const sd = Math.sqrt(
-    //   volumes.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) /
-    //     volumes.length
-    // );
-
-    // // Filter out values that have a Z-score greater than 3 (i.e. 3 standard deviations from the mean)
-    // const filteredData = volumes.filter(
-    //   (val) => Math.abs((val - mean) / sd) <= 3
-    // );
-
-    // let myData = filterMyData(result);
-
-    // console.log(myData);
-    // setVolume(myData);
-
-    // console.log(volumes);
-    // console.log(filteredData);
   }
 
   function filterMyData(results) {
@@ -220,16 +157,16 @@ function ReportsPage() {
         <h5>Reports </h5>
       </div>
       <div className="row  d-flex justify-content-center align-items-center">
-        <div className="col-md-3">
+        <div className="col-lg-3">
           {DatePickerCompo("Start", setFirstDate, firstDate)}
         </div>
-        <div className="col-md-3">
+        <div className="col-lg-3">
           {DatePickerCompo("End", setSecondDate, secondDate)}
         </div>
-        <div className="col-md-3">
+        <div className="col-lg-3">
           {ItemsSelectorCompo(selectedItem, setSelectedItem, dropDownItems)}
         </div>
-        <div className="col-md-3">
+        <div className="col-lg-3">
           <div
             className="container btn mt-2 mb-2 p-1  border border-2 border-primary text-primary  rounded"
             onClick={GetReport}

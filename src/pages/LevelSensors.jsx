@@ -11,15 +11,11 @@ function LevelSensorsPage() {
   async function connectToEsiur() {
     try {
       setLoading(true);
-      let esiurConnection = await Warehouse.get(
-        "iip://phase.delta.iq:40401/sys/service",
-        { autoReconnect: true, reconnect: true }
-      );
 
-      setLevelSensors(esiurConnection.LevelSensors);
+      setLevelSensors(window.connection.LevelSensors);
 
-      esiurConnection.LevelSensors[0].on(":LastUpdate", () => {
-        setLevelSensors(esiurConnection.LevelSensors);
+      window.connection.LevelSensors[0].on(":LastUpdate", () => {
+        setLevelSensors(window.connection.LevelSensors);
         // console.log("modified");
       });
     } catch (e) {
