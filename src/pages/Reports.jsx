@@ -37,6 +37,8 @@ function ReportsPage() {
   const [dropDownItems, setDropDownItems] = useState(null);
 
   const [Items, setItems] = useState();
+  const [generatorData, setGeneratorData] = useState([]);
+  const [phase1Current, setPhase1Current] = useState([]);
 
   const [volume1, setVolume1] = useState([]);
   const [volume2, setVolume2] = useState([]);
@@ -76,6 +78,24 @@ function ReportsPage() {
     ],
   };
 
+  const generatorDataChart = {
+    labels,
+    datasets: [
+      {
+        label: "Current",
+        data: generatorData.length === 0 ? [] : generatorData,
+        borderColor: "rgb(53, 162, 235)",
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+      },
+      {
+        label: "Date",
+        data: dateReport.length === 0 ? [] : dateReport,
+        borderColor: "rgb(53, 162, 235)",
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+      },
+    ],
+  };
+
   function setDropdownItems() {
     let items = [];
 
@@ -92,45 +112,53 @@ function ReportsPage() {
   }
 
   async function GetReport() {
+    setLoading(true);
     const item = Items.find((h) => h.ModbusId === selectedItem);
 
     try {
-      console.log("test");
       let result = await item.GetRecords(firstDate, secondDate, 0, 999);
 
       console.log(result);
 
-      // setVolume2(result.map((x) => x.Volume));
+      if (result[0]?.Type?.name === "ThreePhase") {
+        //generator report
+        setGeneratorData(result);
 
-      // let datesWithVolume = result.map((item) => {
-      //   let data = {
-      //     volume: Math.floor(item.Volume.toFixed(0)),
-      //     date: new Date(item.Time).toLocaleDateString(),
-      //     time: new Date(item.Time).toLocaleTimeString(),
-      //   };
-      //   return data;
-      // });
-      // let volumeData = datesWithVolume.map((x) => Number(x.volume));
-      // let reportDate = datesWithVolume.map((x) => x.date + " " + x.time);
+        // console.log(generatorData);
 
-      // let d = [];
-      // for (let index = 0; index < result.length - 1; index++) {
-      //   let dx =
-      //     (result[index + 1].Volume - result[index].Volume) /
-      //     (result[index + 1].Time - result[index].Time);
+        setLoading(false);
+      } else {
+        // diesel level sensor report
+        setVolume2(result.map((x) => x.Volume));
+        let datesWithVolume = result.map((item) => {
+          let data = {
+            volume: Math.floor(item.Volume.toFixed(0)),
+            date: new Date(item.Time).toLocaleDateString(),
+            time: new Date(item.Time).toLocaleTimeString(),
+          };
+          return data;
+        });
+        let volumeData = datesWithVolume.map((x) => Number(x.volume));
+        let reportDate = datesWithVolume.map((x) => x.date + " " + x.time);
+        let d = [];
+        for (let index = 0; index < result.length - 1; index++) {
+          let dx =
+            (result[index + 1].Volume - result[index].Volume) /
+            (result[index + 1].Time - result[index].Time);
+          //d.push(dx < 1 ? dx : 0);
+          if (dx > 0.001) result[index + 1].Volume = result[index].Volume;
+          d.push(result[index].Volume);
+          //else d.push(0);
+        }
+        // console.log(d);
+        setVolume1(d);
 
-      //   //d.push(dx < 1 ? dx : 0);
-      //   if (dx > 0.001) result[index + 1].Volume = result[index].Volume;
-
-      //   d.push(result[index].Volume);
-      //   //else d.push(0);
-      // }
-
-      // console.log(d);
-      // setVolume1(d);
-      // setDateReport(reportDate);
+        setLoading(false);
+      }
+      setDateReport(reportDate);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   }
 
@@ -175,15 +203,77 @@ function ReportsPage() {
           </div>
         </div>
       </div>
+      {loading ? (
+        <div className="container text-center text-dark">
+          <h4>Loading...</h4>
+        </div>
+      ) : generatorData.length !== 0 ? (
+        GeneratorReportChart()
+      ) : (
+        <div
+          className="container bg-light text-center border border-2 border-danger"
+          style={{ height: 300 }}
+        >
+          <Line options={options} data={data} />
+        </div>
+      )}
+    </>
+  );
 
+  function GeneratorReportChart() {
+    setPhase1Current(result.map((x) => x.Phase1Current));
+    let phase2Current = generatorData.map((g) => {
+      return g.Phase2Current;
+    });
+    let phase3Current = generatorData.map((g) => {
+      return g.Phase2Current;
+    });
+    let phase1Voltage = generatorData.map((g) => {
+      return g.Phase1Voltage;
+    });
+    let phase2Voltage = generatorData.map((g) => {
+      return g.Phase2Voltage;
+    });
+    let phase3Voltage = generatorData.map((g) => {
+      return g.Phase3Voltage;
+    });
+
+    let data = {
+      labels,
+      datasets: [
+        {
+          label: "Current",
+          data: phase1Current.length === 0 ? [] : phase1Current,
+          borderColor: "rgb(53, 162, 235)",
+          backgroundColor: "rgba(53, 162, 235, 0.5)",
+        },
+        {
+          label: "Date",
+          data: dateReport.length === 0 ? [] : dateReport,
+          borderColor: "rgb(53, 162, 235)",
+          backgroundColor: "rgba(53, 162, 235, 0.5)",
+        },
+      ],
+    };
+    return (
       <div
         className="container bg-light text-center border border-2 border-danger"
         style={{ height: 300 }}
       >
-        <Line options={options} data={data} />
+        <Line
+          options={{
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins: {
+              legend: { position: "top" },
+              title: { display: true, text: "Generator" },
+            },
+          }}
+          data={data}
+        />
       </div>
-    </>
-  );
+    );
+  }
 
   function DatePickerCompo(title, onChange, value) {
     return (
