@@ -38,7 +38,16 @@ function ReportsPage() {
 
   const [Items, setItems] = useState();
   const [generatorData, setGeneratorData] = useState([]);
-  const [phase1Current, setPhase1Current] = useState([]);
+
+  const [generatorReportDetials, setGeneratorReportDetails] = useState({
+    frequency: [],
+    phase1Current: [],
+    phase2Current: [],
+    phase3Current: [],
+    phase1Voltage: [],
+    phase2Voltage: [],
+    phase3Voltage: [],
+  });
 
   const [volume1, setVolume1] = useState([]);
   const [volume2, setVolume2] = useState([]);
@@ -118,11 +127,23 @@ function ReportsPage() {
     try {
       let result = await item.GetRecords(firstDate, secondDate, 0, 999);
 
-      console.log(result);
+      // console.log(result);
 
       if (result[0]?.Type?.name === "ThreePhase") {
         //generator report
-        setGeneratorData(result);
+        setGeneratorReportDetails({
+          frequency: Object.values(result).map((e) => e.Frequency),
+          phase1Current: Object.values(result).map((e) => e.Phase1Current),
+          phase2Current: Object.values(result).map((e) => e.Phase2Current),
+          phase3Current: Object.values(result).map((e) => e.Phase3Current),
+          phase1Voltage: Object.values(result).map((e) => e.Phase1Voltage),
+          phase2Voltage: Object.values(result).map((e) => e.Phase2Voltage),
+          phase3Voltage: Object.values(result).map((e) => e.Phase3Voltage),
+        });
+
+        setTimeout(() => {}, 2000);
+
+        console.log(generatorReportDetials);
 
         // console.log(generatorData);
 
@@ -155,7 +176,7 @@ function ReportsPage() {
 
         setLoading(false);
       }
-      setDateReport(reportDate);
+      // setDateReport(reportDate);
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -208,7 +229,8 @@ function ReportsPage() {
           <h4>Loading...</h4>
         </div>
       ) : generatorData.length !== 0 ? (
-        GeneratorReportChart()
+        // GeneratorReportChart()
+        <div className="container">test</div>
       ) : (
         <div
           className="container bg-light text-center border border-2 border-danger"
@@ -220,60 +242,60 @@ function ReportsPage() {
     </>
   );
 
-  function GeneratorReportChart() {
-    setPhase1Current(result.map((x) => x.Phase1Current));
-    let phase2Current = generatorData.map((g) => {
-      return g.Phase2Current;
-    });
-    let phase3Current = generatorData.map((g) => {
-      return g.Phase2Current;
-    });
-    let phase1Voltage = generatorData.map((g) => {
-      return g.Phase1Voltage;
-    });
-    let phase2Voltage = generatorData.map((g) => {
-      return g.Phase2Voltage;
-    });
-    let phase3Voltage = generatorData.map((g) => {
-      return g.Phase3Voltage;
-    });
+  // function GeneratorReportChart() {
+  //   setPhase1Current(result.map((x) => x.Phase1Current));
+  //   let phase2Current = generatorData.map((g) => {
+  //     return g.Phase2Current;
+  //   });
+  //   let phase3Current = generatorData.map((g) => {
+  //     return g.Phase2Current;
+  //   });
+  //   let phase1Voltage = generatorData.map((g) => {
+  //     return g.Phase1Voltage;
+  //   });
+  //   let phase2Voltage = generatorData.map((g) => {
+  //     return g.Phase2Voltage;
+  //   });
+  //   let phase3Voltage = generatorData.map((g) => {
+  //     return g.Phase3Voltage;
+  //   });
 
-    let data = {
-      labels,
-      datasets: [
-        {
-          label: "Current",
-          data: phase1Current.length === 0 ? [] : phase1Current,
-          borderColor: "rgb(53, 162, 235)",
-          backgroundColor: "rgba(53, 162, 235, 0.5)",
-        },
-        {
-          label: "Date",
-          data: dateReport.length === 0 ? [] : dateReport,
-          borderColor: "rgb(53, 162, 235)",
-          backgroundColor: "rgba(53, 162, 235, 0.5)",
-        },
-      ],
-    };
-    return (
-      <div
-        className="container bg-light text-center border border-2 border-danger"
-        style={{ height: 300 }}
-      >
-        <Line
-          options={{
-            maintainAspectRatio: false,
-            responsive: true,
-            plugins: {
-              legend: { position: "top" },
-              title: { display: true, text: "Generator" },
-            },
-          }}
-          data={data}
-        />
-      </div>
-    );
-  }
+  //   let data = {
+  //     labels,
+  //     datasets: [
+  //       {
+  //         label: "Current",
+  //         data: phase1Current.length === 0 ? [] : phase1Current,
+  //         borderColor: "rgb(53, 162, 235)",
+  //         backgroundColor: "rgba(53, 162, 235, 0.5)",
+  //       },
+  //       {
+  //         label: "Date",
+  //         data: dateReport.length === 0 ? [] : dateReport,
+  //         borderColor: "rgb(53, 162, 235)",
+  //         backgroundColor: "rgba(53, 162, 235, 0.5)",
+  //       },
+  //     ],
+  //   };
+  //   return (
+  //     <div
+  //       className="container bg-light text-center border border-2 border-danger"
+  //       style={{ height: 300 }}
+  //     >
+  //       <Line
+  //         options={{
+  //           maintainAspectRatio: false,
+  //           responsive: true,
+  //           plugins: {
+  //             legend: { position: "top" },
+  //             title: { display: true, text: "Generator" },
+  //           },
+  //         }}
+  //         data={data}
+  //       />
+  //     </div>
+  //   );
+  // }
 
   function DatePickerCompo(title, onChange, value) {
     return (
