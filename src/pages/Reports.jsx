@@ -60,7 +60,7 @@ function ReportsPage() {
     responsive: true,
     plugins: {
       legend: { position: "top" },
-      title: { display: true, text: "Diesel Level Sensors" },
+      title: { display: true, text: "Chart Report" },
     },
   };
 
@@ -154,10 +154,11 @@ function ReportsPage() {
         let phase3Voltage = Object.values(result).map((e) => e.Phase3Voltage);
         let time = Object.values(result).map(
           (e) =>
-            new Date(e.Time).toLocaleDateString("en-US") +
-            "-" +
+            formatDate(e.Time) +
+            " : " +
             new Date(e.Time).toLocaleString("en-US", {
               hour: "numeric",
+              minute: "numeric",
               hour12: true,
             })
         );
@@ -365,6 +366,18 @@ function ReportsPage() {
         />
       </div>
     );
+  }
+
+  function formatDate(date) {
+    var d = new Date(date),
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+
+    return [year, month, day].join("-");
   }
 }
 
