@@ -39,17 +39,12 @@ function ReportsPage() {
   const [Items, setItems] = useState();
   const [generatorData, setGeneratorData] = useState([]);
 
-  const [generatorReportDetials, setGeneratorReportDetails] = useState({
-    frequency: [],
-    phase1Current: { values: [], dates: [] },
-    phase2Current: { values: [], dates: [] },
-    phase3Current: { values: [], dates: [] },
-    phase1Voltage: { values: [], dates: [] },
-    phase2Voltage: { values: [], dates: [] },
-    phase3Voltage: { values: [], dates: [] },
-  });
-
   const [phase1Currents, setPhase1Currents] = useState([]);
+  const [phase2Currents, setPhase2Currents] = useState([]);
+  const [phase3Currents, setPhase3Currents] = useState([]);
+  const [phase1Voltages, setPhase1Voltages] = useState([]);
+  const [phase2Voltages, setPhase2Voltages] = useState([]);
+  const [phase3Voltages, setPhase3Voltages] = useState([]);
 
   const [volume1, setVolume1] = useState([]);
   const [volume2, setVolume2] = useState([]);
@@ -93,17 +88,50 @@ function ReportsPage() {
     labels,
     datasets: [
       {
-        label: "Current",
+        label: "Phase 1 Current",
         data: phase1Currents.length === 0 ? [] : phase1Currents,
-        borderColor: "rgb(53, 162, 235)",
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
+        borderColor: "rgb(51, 204, 51)",
+        backgroundColor: "rgb(51, 204, 51)",
       },
       {
-        label: "Date",
-        data: dateReport.length === 0 ? [] : dateReport,
-        borderColor: "rgb(53, 222, 235)",
-        backgroundColor: "rgba(53, 100, 235, 0.5)",
+        label: "Phase 2 Current",
+        data: phase2Currents.length === 0 ? [] : phase2Currents,
+        borderColor: "rgb(255, 204, 102)",
+        backgroundColor: "rgb(255, 204, 102)",
       },
+      {
+        label: "Phase 3 Current",
+        data: phase3Currents.length === 0 ? [] : phase3Currents,
+        borderColor: "rgb(51, 153, 255)",
+        backgroundColor: "rgb(51, 153, 255)",
+      },
+
+      {
+        label: "Phase 1 Voltage",
+        data: phase1Voltages.length === 0 ? [] : phase1Voltages,
+        borderColor: "rgb(153, 0, 0)",
+        backgroundColor: "rgb(153, 0, 0)",
+      },
+
+      {
+        label: "Phase 2 Voltage",
+        data: phase2Voltages.length === 0 ? [] : phase2Voltages,
+        borderColor: "rgb(153, 0, 153)",
+        backgroundColor: "rgb(153, 0, 153)",
+      },
+
+      {
+        label: "Phase 3 Voltage",
+        data: phase3Voltages.length === 0 ? [] : phase3Voltages,
+        borderColor: "rgb(51, 51, 0)",
+        backgroundColor: "rgb(51, 51, 0)",
+      },
+      // {
+      //   label: "Date",
+      //   data: dateReport.length === 0 ? [] : dateReport,
+      //   borderColor: "rgb(53, 222, 235)",
+      //   backgroundColor: "rgba(53, 100, 235, 0.5)",
+      // },
     ],
   };
 
@@ -129,29 +157,27 @@ function ReportsPage() {
     try {
       let result = await item.GetRecords(firstDate, secondDate, 0, 999);
 
-      console.log(result);
-
-      // console.log(result);
-
+      // data for testing report 2023-02-01 1 AM to 2023-02-01 2 AM Mini Generator
+      //check the selected item if its a generator or diesel level sensor
       if (result[0]?.Type?.name === "ThreePhase") {
-        //generator report
-        // setGeneratorReportDetails({
-        //   frequency: Object.values(result).map((e) => e.Frequency),
-        //   phase1Current: Object.values(result).map((e) => e.Phase1Current),
-        //   phase2Current: Object.values(result).map((e) => e.Phase2Current),
-        //   phase3Current: Object.values(result).map((e) => e.Phase3Current),
-        //   phase1Voltage: Object.values(result).map((e) => e.Phase1Voltage),
-        //   phase2Voltage: Object.values(result).map((e) => e.Phase2Voltage),
-        //   phase3Voltage: Object.values(result).map((e) => e.Phase3Voltage),
-        // });
-        let phase1CurrentsData = Object.values(result).map((e) =>
+        let phase1CurrentsRawData = Object.values(result).map((e) =>
           e.Phase1Current.toFixed(0)
         );
-        let phase2Currents = Object.values(result).map((e) => e.Phase2Current);
-        let phase3Currents = Object.values(result).map((e) => e.Phase3Current);
-        let phase1Voltage = Object.values(result).map((e) => e.Phase1Voltage);
-        let phase2Voltage = Object.values(result).map((e) => e.Phase2Voltage);
-        let phase3Voltage = Object.values(result).map((e) => e.Phase3Voltage);
+        let phase2CurrentsRawData = Object.values(result).map((e) =>
+          e.Phase2Current.toFixed(0)
+        );
+        let phase3CurrentsRawData = Object.values(result).map((e) =>
+          e.Phase3Current.toFixed(0)
+        );
+        let phase1VoltageRawData = Object.values(result).map((e) =>
+          e.Phase1Voltage.toFixed(0)
+        );
+        let phase2VoltageRawData = Object.values(result).map((e) =>
+          e.Phase2Voltage.toFixed(0)
+        );
+        let phase3VoltageRawData = Object.values(result).map((e) =>
+          e.Phase3Voltage.toFixed(0)
+        );
         let time = Object.values(result).map(
           (e) =>
             formatDate(e.Time) +
@@ -163,34 +189,14 @@ function ReportsPage() {
             })
         );
 
-        console.log(phase1CurrentsData);
+        setPhase1Currents(phase1CurrentsRawData);
+        setPhase2Currents(phase2CurrentsRawData);
+        setPhase3Currents(phase3CurrentsRawData);
+        setPhase1Voltages(phase1VoltageRawData);
+        setPhase2Voltages(phase2VoltageRawData);
+        setPhase3Voltages(phase3VoltageRawData);
 
-        setPhase1Currents(phase1CurrentsData);
         setDateReport(time);
-        // time.forEach((value) => {
-        //   console.log(new Date(value).toLocaleDateString("en-US"));
-        //   console.log(
-        //     new Date(value).toLocaleString("en-US", {
-        //       hour: "numeric",
-        //       hour12: true,
-        //     })
-        //   );
-        // });
-
-        // let val3 = Object.values(result).map((e) => e.Phase2Current);
-
-        // setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
-        // setGeneratorReportDetails(generatorReportDetials.phase2Current.values);
-        // setGeneratorReportDetails(generatorReportDetials.phase2Current.values);
-        // setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
-        // setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
-        // setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
-
-        // setTimeout(() => {}, 2000);
-
-        // console.log(generatorReportDetials);
-
-        // console.log(generatorData);
 
         setLoading(false);
       } else {
@@ -286,61 +292,6 @@ function ReportsPage() {
       )}
     </>
   );
-
-  // function GeneratorReportChart() {
-  //   setPhase1Current(result.map((x) => x.Phase1Current));
-  //   let phase2Current = generatorData.map((g) => {
-  //     return g.Phase2Current;
-  //   });
-  //   let phase3Current = generatorData.map((g) => {
-  //     return g.Phase2Current;
-  //   });
-  //   let phase1Voltage = generatorData.map((g) => {
-  //     return g.Phase1Voltage;
-  //   });
-  //   let phase2Voltage = generatorData.map((g) => {
-  //     return g.Phase2Voltage;
-  //   });
-  //   let phase3Voltage = generatorData.map((g) => {
-  //     return g.Phase3Voltage;
-  //   });
-
-  //   let data = {
-  //     labels,
-  //     datasets: [
-  //       {
-  //         label: "Current",
-  //         data: phase1Current.length === 0 ? [] : phase1Current,
-  //         borderColor: "rgb(53, 162, 235)",
-  //         backgroundColor: "rgba(53, 162, 235, 0.5)",
-  //       },
-  //       {
-  //         label: "Date",
-  //         data: dateReport.length === 0 ? [] : dateReport,
-  //         borderColor: "rgb(53, 162, 235)",
-  //         backgroundColor: "rgba(53, 162, 235, 0.5)",
-  //       },
-  //     ],
-  //   };
-  //   return (
-  //     <div
-  //       className="container bg-light text-center border border-2 border-danger"
-  //       style={{ height: 300 }}
-  //     >
-  //       <Line
-  //         options={{
-  //           maintainAspectRatio: false,
-  //           responsive: true,
-  //           plugins: {
-  //             legend: { position: "top" },
-  //             title: { display: true, text: "Generator" },
-  //           },
-  //         }}
-  //         data={data}
-  //       />
-  //     </div>
-  //   );
-  // }
 
   function DatePickerCompo(title, onChange, value) {
     return (
