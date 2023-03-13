@@ -49,6 +49,8 @@ function ReportsPage() {
     phase3Voltage: { values: [], dates: [] },
   });
 
+  const [phase1Currents, setPhase1Currents] = useState([]);
+
   const [volume1, setVolume1] = useState([]);
   const [volume2, setVolume2] = useState([]);
   const [dateReport, setDateReport] = useState([]);
@@ -92,15 +94,15 @@ function ReportsPage() {
     datasets: [
       {
         label: "Current",
-        data: generatorData.length === 0 ? [] : generatorData,
+        data: phase1Currents.length === 0 ? [] : phase1Currents,
         borderColor: "rgb(53, 162, 235)",
         backgroundColor: "rgba(53, 162, 235, 0.5)",
       },
       {
         label: "Date",
         data: dateReport.length === 0 ? [] : dateReport,
-        borderColor: "rgb(53, 162, 235)",
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
+        borderColor: "rgb(53, 222, 235)",
+        backgroundColor: "rgba(53, 100, 235, 0.5)",
       },
     ],
   };
@@ -142,22 +144,48 @@ function ReportsPage() {
         //   phase2Voltage: Object.values(result).map((e) => e.Phase2Voltage),
         //   phase3Voltage: Object.values(result).map((e) => e.Phase3Voltage),
         // });
-        let phase1Currents = Object.values(result).map((e) => e.Phase1Current);
+        let phase1CurrentsData = Object.values(result).map((e) =>
+          e.Phase1Current.toFixed(0)
+        );
         let phase2Currents = Object.values(result).map((e) => e.Phase2Current);
         let phase3Currents = Object.values(result).map((e) => e.Phase3Current);
         let phase1Voltage = Object.values(result).map((e) => e.Phase1Voltage);
         let phase2Voltage = Object.values(result).map((e) => e.Phase2Voltage);
         let phase3Voltage = Object.values(result).map((e) => e.Phase3Voltage);
-        let val3 = Object.values(result).map((e) => e.Phase2Current);
+        let time = Object.values(result).map(
+          (e) =>
+            new Date(e.Time).toLocaleDateString("en-US") +
+            "-" +
+            new Date(e.Time).toLocaleString("en-US", {
+              hour: "numeric",
+              hour12: true,
+            })
+        );
 
-        setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
-        setGeneratorReportDetails(generatorReportDetials.phase2Current.values);
-        setGeneratorReportDetails(generatorReportDetials.phase2Current.values);
-        setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
-        setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
-        setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
+        console.log(phase1CurrentsData);
 
-        setTimeout(() => {}, 2000);
+        setPhase1Currents(phase1CurrentsData);
+        setDateReport(time);
+        // time.forEach((value) => {
+        //   console.log(new Date(value).toLocaleDateString("en-US"));
+        //   console.log(
+        //     new Date(value).toLocaleString("en-US", {
+        //       hour: "numeric",
+        //       hour12: true,
+        //     })
+        //   );
+        // });
+
+        // let val3 = Object.values(result).map((e) => e.Phase2Current);
+
+        // setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
+        // setGeneratorReportDetails(generatorReportDetials.phase2Current.values);
+        // setGeneratorReportDetails(generatorReportDetials.phase2Current.values);
+        // setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
+        // setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
+        // setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
+
+        // setTimeout(() => {}, 2000);
 
         // console.log(generatorReportDetials);
 
@@ -252,7 +280,7 @@ function ReportsPage() {
           className="container bg-light text-center border border-2 border-danger"
           style={{ height: 300 }}
         >
-          <Line options={options} data={data} />
+          <Line options={options} data={generatorDataChart} />
         </div>
       )}
     </>
@@ -321,7 +349,7 @@ function ReportsPage() {
           onChange={onChange}
           value={value}
           disableClock={true}
-          format="y-MM-dd h:mm:ss a"
+          format="y-MM-dd"
           clearIcon={null}
         />{" "}
       </div>
