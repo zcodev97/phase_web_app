@@ -13,19 +13,13 @@ function GeneratorsPage() {
   async function connectToEsiur() {
     try {
       setLoading(true);
-      let esiurConnection = await Warehouse.get(
-        "iip://phase.delta.iq:40401/sys/service",
-        { autoReconnect: true, reconnect: true }
-      );
 
-      setGenerators(esiurConnection.Generators);
+      setGenerators(window.connection.Generators);
 
-      esiurConnection.Generators[2].on(":L1A", () => {
-        setGenerators(esiurConnection.Generators);
+      window.connection.Generators[0].on(":LastUpdate", () => {
+        setGenerators(window.connection.Generators);
         // console.log("modified");
       });
-
-      console.log(esiurConnection);
     } catch (e) {
       // alert(e);
       console.log(e);
@@ -35,7 +29,7 @@ function GeneratorsPage() {
   }
 
   useEffect(() => {
-    // connectToEsiur();
+    connectToEsiur();
   }, []);
 
   return (

@@ -16,7 +16,7 @@ window.connection = null;
 async function connectToEsiur() {
   try {
     let esiurConnection = await Warehouse.get(
-      "iip://phase.delta.iq:40401/sys/service",
+      "iip://192.168.4.115:40401/sys/service",
       { autoReconnect: true, reconnect: true }
     );
 

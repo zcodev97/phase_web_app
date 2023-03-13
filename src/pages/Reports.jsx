@@ -41,12 +41,12 @@ function ReportsPage() {
 
   const [generatorReportDetials, setGeneratorReportDetails] = useState({
     frequency: [],
-    phase1Current: [],
-    phase2Current: [],
-    phase3Current: [],
-    phase1Voltage: [],
-    phase2Voltage: [],
-    phase3Voltage: [],
+    phase1Current: { values: [], dates: [] },
+    phase2Current: { values: [], dates: [] },
+    phase3Current: { values: [], dates: [] },
+    phase1Voltage: { values: [], dates: [] },
+    phase2Voltage: { values: [], dates: [] },
+    phase3Voltage: { values: [], dates: [] },
   });
 
   const [volume1, setVolume1] = useState([]);
@@ -127,23 +127,39 @@ function ReportsPage() {
     try {
       let result = await item.GetRecords(firstDate, secondDate, 0, 999);
 
+      console.log(result);
+
       // console.log(result);
 
       if (result[0]?.Type?.name === "ThreePhase") {
         //generator report
-        setGeneratorReportDetails({
-          frequency: Object.values(result).map((e) => e.Frequency),
-          phase1Current: Object.values(result).map((e) => e.Phase1Current),
-          phase2Current: Object.values(result).map((e) => e.Phase2Current),
-          phase3Current: Object.values(result).map((e) => e.Phase3Current),
-          phase1Voltage: Object.values(result).map((e) => e.Phase1Voltage),
-          phase2Voltage: Object.values(result).map((e) => e.Phase2Voltage),
-          phase3Voltage: Object.values(result).map((e) => e.Phase3Voltage),
-        });
+        // setGeneratorReportDetails({
+        //   frequency: Object.values(result).map((e) => e.Frequency),
+        //   phase1Current: Object.values(result).map((e) => e.Phase1Current),
+        //   phase2Current: Object.values(result).map((e) => e.Phase2Current),
+        //   phase3Current: Object.values(result).map((e) => e.Phase3Current),
+        //   phase1Voltage: Object.values(result).map((e) => e.Phase1Voltage),
+        //   phase2Voltage: Object.values(result).map((e) => e.Phase2Voltage),
+        //   phase3Voltage: Object.values(result).map((e) => e.Phase3Voltage),
+        // });
+        let phase1Currents = Object.values(result).map((e) => e.Phase1Current);
+        let phase2Currents = Object.values(result).map((e) => e.Phase2Current);
+        let phase3Currents = Object.values(result).map((e) => e.Phase3Current);
+        let phase1Voltage = Object.values(result).map((e) => e.Phase1Voltage);
+        let phase2Voltage = Object.values(result).map((e) => e.Phase2Voltage);
+        let phase3Voltage = Object.values(result).map((e) => e.Phase3Voltage);
+        let val3 = Object.values(result).map((e) => e.Phase2Current);
+
+        setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
+        setGeneratorReportDetails(generatorReportDetials.phase2Current.values);
+        setGeneratorReportDetails(generatorReportDetials.phase2Current.values);
+        setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
+        setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
+        setGeneratorReportDetails(generatorReportDetials.phase1Current.values);
 
         setTimeout(() => {}, 2000);
 
-        console.log(generatorReportDetials);
+        // console.log(generatorReportDetials);
 
         // console.log(generatorData);
 
