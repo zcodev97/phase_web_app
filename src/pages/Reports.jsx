@@ -50,6 +50,9 @@ function ReportsPage() {
   const [volume2, setVolume2] = useState([]);
   const [dateReport, setDateReport] = useState([]);
 
+  // true for generator, false for diesel
+  const [isGeneratorReport, setIsGeneratorReport] = useState(true);
+
   const options = {
     maintainAspectRatio: false,
     responsive: true,
@@ -60,7 +63,7 @@ function ReportsPage() {
   };
 
   const labels = dateReport.length === 0 ? [] : dateReport;
-  const data = {
+  const dieselLevelDataChart = {
     labels,
     datasets: [
       {
@@ -75,12 +78,12 @@ function ReportsPage() {
         borderColor: "rgb(53, 162, 235)",
         backgroundColor: "rgba(53, 162, 235, 0.5)",
       },
-      {
-        label: "Date",
-        data: dateReport.length === 0 ? [] : dateReport,
-        borderColor: "rgb(53, 162, 235)",
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
+      // {
+      //   label: "Date",
+      //   data: dateReport.length === 0 ? [] : dateReport,
+      //   borderColor: "rgb(53, 162, 235)",
+      //   backgroundColor: "rgba(53, 162, 235, 0.5)",
+      // },
     ],
   };
 
@@ -157,9 +160,12 @@ function ReportsPage() {
     try {
       let result = await item.GetRecords(firstDate, secondDate, 0, 999);
 
+      console.log(result);
+
       // data for testing report 2023-02-01 1 AM to 2023-02-01 2 AM Mini Generator
       //check the selected item if its a generator or diesel level sensor
       if (result[0]?.Type?.name === "ThreePhase") {
+        setIsGeneratorReport(true);
         let phase1CurrentsRawData = Object.values(result).map((e) =>
           e.Phase1Current.toFixed(0)
         );
@@ -200,6 +206,8 @@ function ReportsPage() {
 
         setLoading(false);
       } else {
+        setIsGeneratorReport(false);
+
         // diesel level sensor report
         setVolume2(result.map((x) => x.Volume));
         let datesWithVolume = result.map((item) => {
@@ -287,7 +295,10 @@ function ReportsPage() {
           className="container bg-light text-center border border-2 border-danger"
           style={{ height: 300 }}
         >
-          <Line options={options} data={generatorDataChart} />
+          <Line
+            options={options}
+            data={isGeneratorReport ? generatorDataChart : dieselLevelDataChart}
+          />
         </div>
       )}
     </>
