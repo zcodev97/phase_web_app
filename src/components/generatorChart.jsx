@@ -16,7 +16,10 @@ function GeneratorChart(
   powerFactor
 ) {
   return (
-    <div className="container-fluid m-0 p-0 bg-dark mt-2 border rounded">
+    <div
+      className="container-fluid m-0 p-0 bg-dark mt-2 border rounded"
+      key={Math.random()}
+    >
       {/* ampere levels */}
       <div className="row  d-flex justify-content-center">
         <div className="container p-2 text-light">
@@ -35,7 +38,7 @@ function GeneratorChart(
             key={Math.random()}
             width={300}
             maxValue={500}
-            value={l1a}
+            value={Number(l1a)}
             needleColor="red"
             startColor="green"
             segments={10}
@@ -49,7 +52,7 @@ function GeneratorChart(
             key={Math.random()}
             width={300}
             maxValue={500}
-            value={l2a}
+            value={Number(l2a)}
             needleColor="red"
             startColor="green"
             segments={10}
@@ -63,7 +66,7 @@ function GeneratorChart(
             key={Math.random()}
             width={300}
             maxValue={500}
-            value={l3a}
+            value={Number(l3a)}
             needleColor="red"
             startColor="green"
             segments={10}
@@ -80,7 +83,7 @@ function GeneratorChart(
             key={Math.random()}
             width={300}
             maxValue={500}
-            value={l1v}
+            value={Number(l1v)}
             needleColor="red"
             startColor="green"
             segments={10}
@@ -95,7 +98,7 @@ function GeneratorChart(
             key={Math.random()}
             width={300}
             maxValue={500}
-            value={l2v}
+            value={Number(l2v)}
             needleColor="red"
             startColor="green"
             segments={10}
@@ -110,7 +113,7 @@ function GeneratorChart(
             key={Math.random()}
             width={300}
             maxValue={500}
-            value={l3v}
+            value={Number(l3v)}
             needleColor="red"
             startColor="green"
             segments={10}
