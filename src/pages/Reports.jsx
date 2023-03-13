@@ -349,7 +349,7 @@ function ReportsPage() {
           onChange={onChange}
           value={value}
           disableClock={true}
-          format="y-MM-dd"
+          format="y-MM-dd HH a"
           clearIcon={null}
         />{" "}
       </div>
