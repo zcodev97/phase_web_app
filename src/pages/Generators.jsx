@@ -16,6 +16,8 @@ function GeneratorsPage() {
 
       setGenerators(window.connection.Generators);
 
+      console.log(generators);
+
       window.connection.Generators[0].on(":LastUpdate", () => {
         setGenerators(window.connection.Generators);
         // console.log("modified");

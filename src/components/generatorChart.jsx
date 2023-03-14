@@ -20,6 +20,24 @@ function GeneratorChart(
       className="container-fluid m-0 p-0 bg-dark mt-2 border rounded"
       key={Math.random()}
     >
+      <div className="row p-2 m-2 align-items-center justify-content-center">
+        <div className="col-md-1">
+          <div
+            className="btn btn-success"
+            onClick={() => alert("Your Trying to turn on the generator")}
+          >
+            On
+          </div>
+        </div>
+        <div className="col-md-1">
+          <div
+            className="btn btn-danger"
+            onClick={() => alert("Your Trying to turn Off the generator")}
+          >
+            Off
+          </div>
+        </div>
+      </div>
       {/* ampere levels */}
       <div className="row  d-flex justify-content-center">
         <div className="container p-2 text-light">
